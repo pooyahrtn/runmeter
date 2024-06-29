@@ -5,7 +5,7 @@ import path from "node:path";
 import { z } from "zod";
 import { ConfigFile, ScenarioRunnerUpdate, configFileSchema } from "./types";
 import { createScenarioRunner, warmupScenario } from "./runners";
-import { Box, render, useApp } from "ink";
+import { Box, render } from "ink";
 import { useEffect, useReducer } from "react";
 import { State, reducer } from "./state";
 import { WarmupProgress } from "./components/WarmupProgress";
@@ -22,7 +22,7 @@ const readConfig = (): Promise<ConfigFile> =>
 function runScenarios(
   config: ConfigFile,
   callbacks: {
-    onScenarioUpdate: (name: string, report: ScenarioRunnerUpdate[]) => void;
+    onScenarioUpdate: (name: string, newUpdate: ScenarioRunnerUpdate) => void;
     onFinished: () => void;
   }
 ) {
@@ -37,19 +37,16 @@ function runScenarios(
   const intervalDuration = 500;
 
   const interval = setInterval(() => {
-    let allFinished = true;
-
     elapsedSeconds = elapsedSeconds + intervalDuration / 1000;
 
-    scenarios.forEach((scenario) => {
-      const isFinished = scenario.runner.tick(elapsedSeconds);
-      if (!isFinished) {
-        allFinished = false;
-      }
-    });
+    const allFinished = scenarios.every(({ runner }) =>
+      runner.isFinished(elapsedSeconds)
+    );
 
     scenarios.forEach((scenario) => {
-      callbacks.onScenarioUpdate(scenario.name, scenario.runner.report());
+      callbacks.onScenarioUpdate(scenario.name, {
+        runs: scenario.runner.flush(),
+      });
     });
 
     if (allFinished) {
@@ -109,8 +106,8 @@ function App(props: { config: ConfigFile }) {
       onFinished() {
         dispatch({ type: "phase-change", phase: "finished" });
       },
-      onScenarioUpdate(name, report) {
-        dispatch({ type: "scenario-update", name, report });
+      onScenarioUpdate(name, newUpdates) {
+        dispatch({ type: "scenario-update", name, newUpdates });
       },
     });
 

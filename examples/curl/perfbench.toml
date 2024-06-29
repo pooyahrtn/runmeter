@@ -2,11 +2,12 @@ warmups = 2
 duration = '20s'
 max_concurrent_sessions = 2
 
-[scenarios.one]
+[scenarios.google]
 script = '''
-curl http://asciiart.artillery.io:8080/dino
+curl https://www.google.com
 '''
 
-[scenarios.two]
+[scenarios.yahoo]
 script = '''
-curl http://asciiart.artillery.io:8080'''
+curl https://www.yahoo.com
+'''

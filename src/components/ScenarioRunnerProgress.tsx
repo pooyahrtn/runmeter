@@ -14,24 +14,40 @@ export function ScenarioRunnerProgress(props: {
       .map((value) => math.mean(value.runs.map((run) => run.duration)))
   );
 
+  if (!averages.every((value) => value.length > 0)) {
+    return;
+  }
+
   return (
-    <Box>
-      {averages.every((value) => value.length > 0) && (
-        <Text>
-          {Chart.plot(averages, {
-            colors: scenarios.map((_, index) => COlORS[index]),
-          })}
-        </Text>
-      )}
+    <Box paddingY={1} flexDirection="column">
+      <Text>
+        {Chart.plot(averages, {
+          colors: scenarios.map((_, index) => COlORS[index][1]),
+          height: CHART_HEIGHT,
+        })}
+      </Text>
+      <Box flexDirection="row" paddingY={1}>
+        {scenarios.map((scenario, index) => (
+          <Box
+            key={scenario.name}
+            borderColor={COlORS[index][0]}
+            borderStyle={"round"}
+            paddingX={1}
+          >
+            <Text color={COlORS[index][0]}>{scenario.name}</Text>
+          </Box>
+        ))}
+      </Box>
     </Box>
   );
 }
 
 const COlORS = [
-  Chart.red,
-  Chart.blue,
-  Chart.green,
-  Chart.yellow,
-  Chart.magenta,
-  Chart.cyan,
+  ["red", Chart.red],
+  ["blue", Chart.blue],
+  ["green", Chart.green],
+  ["yellow", Chart.yellow],
+  ["magenta", Chart.magenta],
 ];
+
+const CHART_HEIGHT = 15;

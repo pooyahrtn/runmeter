@@ -1,10 +1,5 @@
 import { createSemaphore } from "./semaphore";
-import {
-  RunScriptResult,
-  ScenarioConfig,
-  ScenarioRunnerUpdate,
-  SharedConfig,
-} from "./types";
+import { RunScriptResult, ScenarioConfig, SharedConfig } from "./types";
 import { parseDurationToSeconds } from "./utils";
 
 const parseConfig = (
@@ -61,7 +56,7 @@ export function createScenarioRunner(
     defaultConfig
   );
 
-  const results: ScenarioRunnerUpdate[] = [{ time: 0, runs: [] }];
+  const results: RunScriptResult[] = [];
 
   let concurrentSessions = 0;
 
@@ -71,7 +66,7 @@ export function createScenarioRunner(
       concurrentSessions++;
       runScript(scenario.script).then((result) => {
         concurrentSessions--;
-        results[results.length - 1].runs.push(result);
+        results.push(result);
       });
     }
   }, 10);
@@ -80,17 +75,18 @@ export function createScenarioRunner(
    * Called on every tick of the scenario.
    * Returns if the scenario has finished or not.
    */
-  function tick(elapsedSeconds: number): boolean {
+  function isFinished(elapsedSeconds: number): boolean {
     if (elapsedSeconds > parseDurationToSeconds(duration)) {
       return true;
     }
-    results.push({ time: elapsedSeconds, runs: [] });
 
     return false;
   }
 
-  function report() {
-    return results;
+  function flush() {
+    const currentResults = [...results];
+    results.length = 0;
+    return currentResults;
   }
 
   function stop() {
@@ -98,9 +94,9 @@ export function createScenarioRunner(
   }
 
   return {
-    tick,
+    isFinished,
     stop,
-    report,
+    flush,
   };
 }
 

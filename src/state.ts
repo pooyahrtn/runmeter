@@ -19,7 +19,11 @@ export type State = {
 export type Action =
   | { type: "phase-change"; phase: "warmup" | "running" | "finished" }
   | { type: "warmup-progress"; name: string; progress: number }
-  | { type: "scenario-update"; name: string; report: ScenarioRunnerUpdate[] };
+  | {
+      type: "scenario-update";
+      name: string;
+      newUpdates: ScenarioRunnerUpdate;
+    };
 
 export const reducer = (state: State, action: Action): State => {
   switch (action.type) {
@@ -44,7 +48,7 @@ export const reducer = (state: State, action: Action): State => {
           ...state.running,
           tasks: state.running.tasks.map((task) =>
             task.name === action.name
-              ? { ...task, updates: action.report }
+              ? { ...task, updates: [...task.updates, action.newUpdates] }
               : task
           ),
         },

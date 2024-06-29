@@ -33,4 +33,4 @@ export type RunScriptResult = {
   duration: number;
 };
 
-export type ScenarioRunnerUpdate = { time: number; runs: RunScriptResult[] };
+export type ScenarioRunnerUpdate = { runs: RunScriptResult[] };
