@@ -1,0 +1,12 @@
+warmups = 2
+duration = '20s'
+max_concurrent_sessions = 2
+
+[scenarios.one]
+script = '''
+curl http://asciiart.artillery.io:8080/dino
+'''
+
+[scenarios.two]
+script = '''
+curl http://asciiart.artillery.io:8080'''

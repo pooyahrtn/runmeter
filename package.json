@@ -1,0 +1,36 @@
+{
+  "name": "perfbench",
+  "private": true,
+  "version": "0.0.0",
+  "type": "module",
+  "main": "src/index.tsx",
+  "bin": {
+    "perfbench": "./src/index.tsx"
+  },
+  "scripts": {
+    "start": "bun link && bun link perfbench",
+    "lint": "eslint . --ext ts,tsx --report-unused-disable-directives --max-warnings 0"
+  },
+  "dependencies": {
+    "asciichart": "^1.5.25",
+    "ink": "^5.0.1",
+    "mathjs": "^13.0.0",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0",
+    "toml": "^3.0.0",
+    "zod": "^3.23.8"
+  },
+  "devDependencies": {
+    "@types/asciichart": "^1.5.8",
+    "@types/bun": "^1.1.5",
+    "@types/react": "^18.2.66",
+    "@types/react-dom": "^18.2.22",
+    "@typescript-eslint/eslint-plugin": "^7.2.0",
+    "@typescript-eslint/parser": "^7.2.0",
+    "eslint": "^8.57.0",
+    "eslint-plugin-react-hooks": "^4.6.0",
+    "eslint-plugin-react-refresh": "^0.4.6",
+    "typescript": "^5.2.2"
+  },
+  "packageManager": "yarn@1.22.22+sha512.a6b2f7906b721bba3d67d4aff083df04dad64c399707841b7acf00f6b133b7ac24255f2652fa22ae3534329dc6180534e98d17432037ff6fd140556e2bb3137e"
+}
