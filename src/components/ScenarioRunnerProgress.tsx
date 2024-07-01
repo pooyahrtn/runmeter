@@ -3,6 +3,7 @@ import { ScenarioRunnerUpdate } from "../types";
 import * as Chart from "asciichart";
 import * as math from "mathjs";
 import { Section } from "./Section";
+import { CHART_HEIGHT, COlORS } from "./config";
 
 export function ScenarioRunnerProgress(props: {
   scenarios: { name: string; updates: ScenarioRunnerUpdate[] }[];
@@ -26,7 +27,8 @@ export function ScenarioRunnerProgress(props: {
     return;
   }
   const chartPadding = Math.max(
-    ...averages.flat().map((value) => value.toFixed(2).toString().length)
+    ...averages.flat().map((value) => value.toFixed(2).toString().length),
+    7
   );
 
   return (
@@ -58,13 +60,3 @@ export function ScenarioRunnerProgress(props: {
     </Section>
   );
 }
-
-const COlORS = [
-  ["red", Chart.red],
-  ["blue", Chart.blue],
-  ["green", Chart.green],
-  ["yellow", Chart.yellow],
-  ["magenta", Chart.magenta],
-];
-
-const CHART_HEIGHT = 15;

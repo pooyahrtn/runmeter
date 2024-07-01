@@ -15,3 +15,7 @@ export const parseDurationToSeconds = (duration: string): number => {
 export const average = (arr: number[]): number => {
   return arr.reduce((a, b) => a + b, 0) / arr.length;
 };
+
+export const zip = <T, U>(arr1: T[], arr2: U[]): [T, U][] => {
+  return arr1.map((value, index) => [value, arr2[index]]);
+};

@@ -11,6 +11,7 @@ import { State, reducer } from "./state";
 import { WarmupProgress } from "./components/WarmupProgress";
 import { ScenarioRunnerProgress } from "./components/ScenarioRunnerProgress";
 import { parseDurationToSeconds } from "./utils";
+import { Results } from "./components/ScenarioResults";
 
 const CONFIG_FILE_NAME = "perfbench.toml";
 
@@ -115,13 +116,13 @@ function App(props: { config: ConfigFile }) {
     return () => clearRunner();
   }, [config, currentState]);
 
-  useEffect(() => {
-    if (currentState !== "finished") {
-      return;
-    }
+  // useEffect(() => {
+  //   if (currentState !== "finished") {
+  //     return;
+  //   }
 
-    process.exit(0);
-  }, [currentState]);
+  //   process.exit(0);
+  // }, [currentState]);
 
   return (
     <Box flexDirection="column">
@@ -131,6 +132,9 @@ function App(props: { config: ConfigFile }) {
           scenarios={state.running.tasks}
           maxStepsLength={getMaxStepsLength(config) * 2}
         />
+      )}
+      {state.current === "finished" && (
+        <Results scenarios={state.running.tasks} />
       )}
     </Box>
   );
