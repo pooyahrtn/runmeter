@@ -1,6 +1,5 @@
 import { Box, Text } from "ink";
 import { zip } from "../../utils";
-import { Section } from "../Section";
 
 type ItemStats = {
   name: string;
@@ -25,7 +24,7 @@ export function WhiskerPlot(props: { items: ItemStats[] }) {
   );
 
   return (
-    <Section title="Box plot">
+    <Box flexDirection="column" borderStyle={"single"}>
       {zip(stats, props.items).map(([stat, scenario]) => (
         <Box key={scenario.name} flexDirection="row" alignItems="center">
           <Text>
@@ -39,7 +38,7 @@ export function WhiskerPlot(props: { items: ItemStats[] }) {
           />
         </Box>
       ))}
-    </Section>
+    </Box>
   );
 }
 

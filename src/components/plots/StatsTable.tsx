@@ -1,6 +1,5 @@
 import * as mathjs from "mathjs";
-import { Section } from "../Section";
-import Table from "ink-table";
+import Table from "./Table";
 
 type ItemStats = {
   name: string;
@@ -9,26 +8,29 @@ type ItemStats = {
 export function StatsTable(props: { items: ItemStats[] }) {
   const { items } = props;
   const tableData = items.map((item) => ({
-    ...getItemStats(item.values),
     name: item.name,
+    ...getItemStats(item.values),
   }));
 
-  return <Section title="Stats">{<Table data={tableData} />}</Section>;
+  return <Table data={tableData} />;
 }
 
 type ItemTableStat = {
-  "25%": number;
-  median: number;
-  "75%": number;
-  average: number;
-  std: number;
+  "25%": string;
+  median: string;
+  "75%": string;
+  average: string;
+  std: string;
 };
 function getItemStats(values: number[]): ItemTableStat {
   return {
-    "25%": mathjs.quantileSeq(values, 0.25),
-    median: mathjs.median(values),
-    "75%": mathjs.quantileSeq(values, 0.75),
-    average: mathjs.mean(values),
-    std: mathjs.std(values) as unknown as number,
+    "25%": formatNumber(mathjs.quantileSeq(values, 0.25)),
+    median: formatNumber(mathjs.median(values)),
+    "75%": formatNumber(mathjs.quantileSeq(values, 0.75)),
+    average: formatNumber(mathjs.mean(values)),
+    std: formatNumber(mathjs.std(values) as unknown as number, ""),
   };
 }
+
+const formatNumber = (n: number, postfix = "ms") =>
+  n.toFixed(2) + " " + postfix;

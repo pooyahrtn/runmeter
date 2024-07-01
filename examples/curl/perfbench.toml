@@ -2,9 +2,9 @@ warmups = 1
 duration = '10s'
 max_concurrent_sessions = 2
 
-[scenarios.amazon]
+[scenarios.facebook]
 script = '''
-curl https://www.amazon.com
+curl https://www.facebook.com
 '''
 
 [scenarios.yahoo]

@@ -8,9 +8,9 @@ export function Section(
     <Box paddingTop={1} flexDirection="column">
       <Box
         flexDirection="column"
-        borderStyle={"round"}
-        borderLeft={props.hideHorizontalBorder ?? true}
-        borderRight={props.hideHorizontalBorder ?? true}
+        borderStyle={"single"}
+        borderLeft={true}
+        borderRight={true}
         borderBottom={true}
         paddingTop={1}
       >

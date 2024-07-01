@@ -5,7 +5,7 @@ import path from "node:path";
 import { z } from "zod";
 import { ConfigFile, ScenarioRunnerUpdate, configFileSchema } from "./types";
 import { createScenarioRunner, warmupScenario } from "./runners";
-import { Box, render } from "ink";
+import { Box, render, Text } from "ink";
 import { useEffect, useReducer } from "react";
 import { State, reducer } from "./state";
 import { WarmupProgress } from "./components/WarmupProgress";
@@ -23,6 +23,7 @@ const readConfig = (): Promise<ConfigFile> =>
 
 function runScenarios(
   config: ConfigFile,
+  intervalDuration: number,
   callbacks: {
     onScenarioUpdate: (name: string, newUpdate: ScenarioRunnerUpdate) => void;
     onFinished: () => void;
@@ -36,7 +37,6 @@ function runScenarios(
   );
 
   let elapsedSeconds = 0;
-  const intervalDuration = 500;
 
   const interval = setInterval(() => {
     elapsedSeconds = elapsedSeconds + intervalDuration / 1000;
@@ -52,14 +52,17 @@ function runScenarios(
     });
 
     if (allFinished) {
+      stop();
       callbacks.onFinished();
-      clearInterval(interval);
     }
   }, intervalDuration);
 
-  return () => {
+  const stop = () => {
+    scenarios.forEach(({ runner }) => runner.stop());
     clearInterval(interval);
   };
+
+  return stop;
 }
 
 function App(props: { config: ConfigFile }) {
@@ -98,31 +101,30 @@ function App(props: { config: ConfigFile }) {
   }, [config]);
 
   const currentState = state.current;
+  // TODO: consider changing the runner output, to return a flat array of updates,
+  // so the Scenario progressbar take care of the rendering.
+  const maxScenarioProgressWidth = (process.stdout.columns ?? 80) - 13;
 
   useEffect(() => {
     if (currentState !== "running") {
       return;
     }
 
-    const clearRunner = runScenarios(config, {
-      onFinished() {
-        dispatch({ type: "phase-change", phase: "finished" });
-      },
-      onScenarioUpdate(name, newUpdates) {
-        dispatch({ type: "scenario-update", name, newUpdates });
-      },
-    });
+    const clearRunner = runScenarios(
+      config,
+      getIntervalDuration(config, maxScenarioProgressWidth),
+      {
+        onFinished() {
+          dispatch({ type: "phase-change", phase: "finished" });
+        },
+        onScenarioUpdate(name, newUpdates) {
+          dispatch({ type: "scenario-update", name, newUpdates });
+        },
+      }
+    );
 
     return () => clearRunner();
-  }, [config, currentState]);
-
-  // useEffect(() => {
-  //   if (currentState !== "finished") {
-  //     return;
-  //   }
-
-  //   process.exit(0);
-  // }, [currentState]);
+  }, [config, currentState, maxScenarioProgressWidth]);
 
   return (
     <Box flexDirection="column">
@@ -130,7 +132,7 @@ function App(props: { config: ConfigFile }) {
       {(state.current === "running" || state.current === "finished") && (
         <ScenarioRunnerProgress
           scenarios={state.running.tasks}
-          maxStepsLength={getMaxStepsLength(config) * 2}
+          maxStepsLength={maxScenarioProgressWidth}
         />
       )}
       {state.current === "finished" && (
@@ -140,11 +142,13 @@ function App(props: { config: ConfigFile }) {
   );
 }
 
-function getMaxStepsLength(config: ConfigFile) {
+function getIntervalDuration(config: ConfigFile, maxWidth: number) {
   const scenarioDurations = Object.values(config.scenarios).map((scenario) => {
     return parseDurationToSeconds(scenario.duration ?? config.duration);
   });
-  return Math.max(...scenarioDurations);
+  const maxDuration = Math.max(...scenarioDurations);
+
+  return Math.ceil((maxDuration / maxWidth) * 1000);
 }
 
 async function main() {
