@@ -1,5 +1,6 @@
-import { Box, Text, render } from "ink";
+import { Box, Text } from "ink";
 import { zip } from "../../utils";
+import { Section } from "../Section";
 
 type ItemStats = {
   name: string;
@@ -24,7 +25,7 @@ export function WhiskerPlot(props: { items: ItemStats[] }) {
   );
 
   return (
-    <Box flexDirection="column">
+    <Section title="Box plot">
       {zip(stats, props.items).map(([stat, scenario]) => (
         <Box key={scenario.name} flexDirection="row" alignItems="center">
           <Text>
@@ -38,7 +39,7 @@ export function WhiskerPlot(props: { items: ItemStats[] }) {
           />
         </Box>
       ))}
-    </Box>
+    </Section>
   );
 }
 
@@ -91,7 +92,9 @@ function ItemWhisker(props: {
         height={3}
         flexDirection="column"
       >
-        {scale(q3 - q1) > 1 && <Text>{" ".repeat(scale(median - q1))}│</Text>}
+        {scale(median - q1) - 1 > 0 && (
+          <Text>{" ".repeat(scale(median - q1) - 1)}│</Text>
+        )}
       </Box>
       <Text>{"─".repeat(scale(upperWhisker - q3))}</Text>
       <Text>┤</Text>
@@ -102,10 +105,9 @@ function ItemWhisker(props: {
 const scaleValue = (scale: number) => (value: number) =>
   Math.round(value * scale);
 
-const sampleData = [
-  { name: "A", values: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10] },
-  { name: "B", values: [1, 2, 3, 4, 5, 8, 9, 10] },
-];
+// const sampleData = [
+//   { name: "A", values: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11] },
+//   { name: "B", values: [1, 2, 2, 2, 4, 3] },
+// ];
 
-render(<WhiskerPlot items={sampleData} />);
-//
+// render(<WhiskerPlot items={sampleData} />);

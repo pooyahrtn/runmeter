@@ -8,6 +8,6 @@ export const COlORS = [
   ["magenta", Chart.magenta],
 ];
 
-export const CHART_HEIGHT = 15;
+export const CHART_HEIGHT = 12;
 
 export const DEFAULT_BINS = 30;
