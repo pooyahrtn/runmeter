@@ -10,6 +10,7 @@ import { useEffect, useReducer } from "react";
 import { State, reducer } from "./state";
 import { WarmupProgress } from "./components/WarmupProgress";
 import { ScenarioRunnerProgress } from "./components/ScenarioRunnerProgress";
+import { parseDurationToSeconds } from "./utils";
 
 const CONFIG_FILE_NAME = "perfbench.toml";
 
@@ -118,7 +119,6 @@ function App(props: { config: ConfigFile }) {
     if (currentState !== "finished") {
       return;
     }
-    console.log("time to exit");
 
     process.exit(0);
   }, [currentState]);
@@ -127,10 +127,20 @@ function App(props: { config: ConfigFile }) {
     <Box flexDirection="column">
       <WarmupProgress tasks={state.warmup.tasks} />
       {(state.current === "running" || state.current === "finished") && (
-        <ScenarioRunnerProgress scenarios={state.running.tasks} />
+        <ScenarioRunnerProgress
+          scenarios={state.running.tasks}
+          maxStepsLength={getMaxStepsLength(config) * 2}
+        />
       )}
     </Box>
   );
+}
+
+function getMaxStepsLength(config: ConfigFile) {
+  const scenarioDurations = Object.values(config.scenarios).map((scenario) => {
+    return parseDurationToSeconds(scenario.duration ?? config.duration);
+  });
+  return Math.max(...scenarioDurations);
 }
 
 async function main() {
