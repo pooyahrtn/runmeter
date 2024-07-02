@@ -1,16 +1,14 @@
 {
   "name": "perfbench",
   "private": true,
-  "version": "0.0.0",
+  "version": "0.0.1",
   "type": "module",
   "main": "src/index.tsx",
-  "bin": {
-    "perfbench": "./src/index.tsx"
-  },
+  "bin": "dist/index.js",
   "scripts": {
-    "start": "bun link && bun link perfbench",
+    "start": "pnpm run build && node dist/index.js",
     "lint": "eslint . --ext ts,tsx --report-unused-disable-directives --max-warnings 0",
-    "postinstall": "patch-package"
+    "build": "tsup src/index.tsx"
   },
   "dependencies": {
     "asciichart": "^1.5.25",
@@ -29,11 +27,12 @@
     "@types/react-dom": "^18.2.22",
     "@typescript-eslint/eslint-plugin": "^7.2.0",
     "@typescript-eslint/parser": "^7.2.0",
+    "esbuild": "^0.23.0",
     "eslint": "^8.57.0",
     "eslint-plugin-react-hooks": "^4.6.0",
     "eslint-plugin-react-refresh": "^0.4.6",
-    "patch-package": "^8.0.0",
+    "tsup": "^8.1.0",
     "typescript": "^5.2.2"
   },
-  "packageManager": "yarn@1.22.22+sha512.a6b2f7906b721bba3d67d4aff083df04dad64c399707841b7acf00f6b133b7ac24255f2652fa22ae3534329dc6180534e98d17432037ff6fd140556e2bb3137e"
+  "packageManager": "pnpm@9.4.0+sha512.f549b8a52c9d2b8536762f99c0722205efc5af913e77835dbccc3b0b0b2ca9e7dc8022b78062c17291c48e88749c70ce88eb5a74f1fa8c4bf5e18bb46c8bd83a"
 }

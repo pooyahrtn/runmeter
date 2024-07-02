@@ -1,23 +1,25 @@
-#!/usr/bin/env bun
+#!/usr/bin/env node
 
 import * as toml from "toml";
 import path from "node:path";
 import { z } from "zod";
 import { ConfigFile, ScenarioRunnerUpdate, configFileSchema } from "./types";
 import { createScenarioRunner, warmupScenario } from "./runners";
-import { Box, render, Text } from "ink";
+import { Box, render } from "ink";
 import { useEffect, useReducer } from "react";
 import { State, reducer } from "./state";
 import { WarmupProgress } from "./components/WarmupProgress";
 import { ScenarioRunnerProgress } from "./components/ScenarioRunnerProgress";
 import { parseDurationToSeconds } from "./utils";
 import { Results } from "./components/ScenarioResults";
+import fs from "fs/promises";
 
 const CONFIG_FILE_NAME = "perfbench.toml";
 
 const readConfig = (): Promise<ConfigFile> =>
-  Bun.file(path.resolve(process.cwd(), CONFIG_FILE_NAME))
-    .text()
+  fs
+    .readFile(path.resolve(process.cwd(), CONFIG_FILE_NAME))
+    .then((buffer) => buffer.toString())
     .then((config) => toml.parse(config))
     .then(configFileSchema.parse);
 

@@ -1,6 +1,7 @@
 import { createSemaphore } from "./semaphore";
 import { RunScriptResult, ScenarioConfig, SharedConfig } from "./types";
 import { parseDurationToSeconds } from "./utils";
+import { spawn } from "child_process";
 
 const parseConfig = (
   scenario: ScenarioConfig,
@@ -103,11 +104,29 @@ export function createScenarioRunner(
 const runScript = async (script: string): Promise<RunScriptResult> => {
   const args = script.trim().split(" ");
   const now = process.hrtime();
-  const task = Bun.spawn(args, { stderr: "ignore", stdout: "ignore" });
-  const exitCode = await task.exited;
+  const exitCode = await spawnProcess(args[0], args.slice(1));
   const duration = process.hrtime(now);
   return {
     successful: exitCode === 0,
     duration: duration[0] * 1e3 + duration[1] / 1e6,
   };
+};
+
+const spawnProcess = async (
+  command: string,
+  args: string[]
+): Promise<number | null> => {
+  return new Promise((resolve, reject) => {
+    const process = spawn(command, args, {
+      stdio: ["ignore", "ignore", "ignore"],
+    });
+
+    process.on("close", (code) => {
+      resolve(code);
+    });
+
+    process.on("error", (error) => {
+      reject(error);
+    });
+  });
 };
