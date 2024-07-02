@@ -1,5 +1,5 @@
 import * as mathjs from "mathjs";
-import Table from "./Table";
+import { Table } from "@tqman/ink-table";
 
 type ItemStats = {
   name: string;
