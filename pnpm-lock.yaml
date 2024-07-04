@@ -17,9 +17,6 @@ importers:
       ink:
         specifier: ^5.0.1
         version: 5.0.1(@types/react@18.3.3)(react@18.3.1)
-      ink-table:
-        specifier: ^3.1.0
-        version: 3.1.0(ink@5.0.1(@types/react@18.3.3)(react@18.3.1))(react@18.3.1)
       mathjs:
         specifier: ^13.0.0
         version: 13.0.1
@@ -982,12 +979,6 @@ packages:
 
   inherits@2.0.4:
     resolution: {integrity: sha512-k/vGaX4/Yla3WzyMCvTQOXYeIHvqOKtnqBduzTHpzpQZzAskKMhZ2K+EnBiSM9zGSoIFeMpXKxa4dYeZIQqewQ==}
-
-  ink-table@3.1.0:
-    resolution: {integrity: sha512-qxVb4DIaEaJryvF9uZGydnmP9Hkmas3DCKVpEcBYC0E4eJd3qNgNe+PZKuzgCERFe9LfAS1TNWxCr9+AU4v3YA==}
-    peerDependencies:
-      ink: '>=3.0.0'
-      react: '>=16.8.0'
 
   ink@5.0.1:
     resolution: {integrity: sha512-ae4AW/t8jlkj/6Ou21H2av0wxTk8vrGzXv+v2v7j4in+bl1M5XRMVbfNghzhBokV++FjF8RBDJvYo+ttR9YVRg==}
@@ -2353,12 +2344,6 @@ snapshots:
       wrappy: 1.0.2
 
   inherits@2.0.4: {}
-
-  ink-table@3.1.0(ink@5.0.1(@types/react@18.3.3)(react@18.3.1))(react@18.3.1):
-    dependencies:
-      ink: 5.0.1(@types/react@18.3.3)(react@18.3.1)
-      object-hash: 2.2.0
-      react: 18.3.1
 
   ink@5.0.1(@types/react@18.3.3)(react@18.3.1):
     dependencies:

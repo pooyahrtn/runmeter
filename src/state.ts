@@ -1,4 +1,4 @@
-import { ScenarioRunnerUpdate } from "./types";
+import { RunningTask } from "./types";
 
 type WarmupState = {
   type: "warmup";
@@ -7,7 +7,7 @@ type WarmupState = {
 
 type RunningState = {
   type: "running";
-  tasks: { name: string; updates: ScenarioRunnerUpdate[] }[];
+  tasks: RunningTask[];
 };
 
 export type State = {
@@ -21,8 +21,7 @@ export type Action =
   | { type: "warmup-progress"; name: string; progress: number }
   | {
       type: "scenario-update";
-      name: string;
-      newUpdates: ScenarioRunnerUpdate;
+      task: RunningTask;
     };
 
 export const reducer = (state: State, action: Action): State => {
@@ -47,8 +46,12 @@ export const reducer = (state: State, action: Action): State => {
         running: {
           ...state.running,
           tasks: state.running.tasks.map((task) =>
-            task.name === action.name
-              ? { ...task, updates: [...task.updates, action.newUpdates] }
+            task.name === action.task.name
+              ? ({
+                  ...task,
+                  ...action.task,
+                  updates: [...task.updates, ...action.task.updates],
+                } satisfies RunningTask)
               : task
           ),
         },

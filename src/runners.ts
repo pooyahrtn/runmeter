@@ -94,7 +94,12 @@ export function createScenarioRunner(
     clearInterval(interval);
   }
 
+  function getActiveSessions() {
+    return concurrentSessions;
+  }
+
   return {
+    getActiveSessions,
     isFinished,
     stop,
     flush,

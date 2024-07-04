@@ -8,7 +8,7 @@ import { createScenarioRunner, warmupScenario } from "./runners";
 import { Box, render } from "ink";
 import { useEffect, useReducer } from "react";
 import { State, reducer } from "./state";
-import { WarmupProgress } from "./components/WarmupProgress";
+import WarmupProgress from "./components/WarmupProgress";
 import { ScenarioRunnerProgress } from "./components/ScenarioRunnerProgress";
 import { parseDurationToSeconds } from "./utils";
 import { Results } from "./components/ScenarioResults";
@@ -27,7 +27,11 @@ function runScenarios(
   config: ConfigFile,
   intervalDuration: number,
   callbacks: {
-    onScenarioUpdate: (name: string, newUpdate: ScenarioRunnerUpdate) => void;
+    onScenarioUpdate: (
+      name: string,
+      newUpdate: ScenarioRunnerUpdate,
+      activeSessions: number
+    ) => void;
     onFinished: () => void;
   }
 ) {
@@ -48,9 +52,13 @@ function runScenarios(
     );
 
     scenarios.forEach((scenario) => {
-      callbacks.onScenarioUpdate(scenario.name, {
-        runs: scenario.runner.flush(),
-      });
+      callbacks.onScenarioUpdate(
+        scenario.name,
+        {
+          runs: scenario.runner.flush(),
+        },
+        scenario.runner.getActiveSessions()
+      );
     });
 
     if (allFinished) {
@@ -84,6 +92,7 @@ function App(props: { config: ConfigFile }) {
       tasks: Object.keys(config.scenarios).map((name) => ({
         name,
         updates: [],
+        concurrentSessions: 0,
       })),
     },
   };
@@ -119,8 +128,15 @@ function App(props: { config: ConfigFile }) {
         onFinished() {
           dispatch({ type: "phase-change", phase: "finished" });
         },
-        onScenarioUpdate(name, newUpdates) {
-          dispatch({ type: "scenario-update", name, newUpdates });
+        onScenarioUpdate(name, newUpdates, activeSessions) {
+          dispatch({
+            type: "scenario-update",
+            task: {
+              name,
+              updates: [newUpdates],
+              concurrentSessions: activeSessions,
+            },
+          });
         },
       }
     );

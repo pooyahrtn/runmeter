@@ -34,3 +34,9 @@ export type RunScriptResult = {
 };
 
 export type ScenarioRunnerUpdate = { runs: RunScriptResult[] };
+
+export type RunningTask = {
+  name: string;
+  updates: ScenarioRunnerUpdate[];
+  concurrentSessions: number;
+};

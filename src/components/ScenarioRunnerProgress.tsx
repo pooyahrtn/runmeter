@@ -1,12 +1,13 @@
 import { Box, Text } from "ink";
-import { ScenarioRunnerUpdate } from "../types";
+import { RunningTask } from "../types";
 import * as Chart from "asciichart";
 import * as math from "mathjs";
 import { Section } from "./Section";
 import { CHART_HEIGHT, COlORS } from "./config";
+import { Table } from "@tqman/ink-table";
 
 export function ScenarioRunnerProgress(props: {
-  scenarios: { name: string; updates: ScenarioRunnerUpdate[] }[];
+  scenarios: RunningTask[];
   maxStepsLength: number;
 }) {
   const { scenarios, maxStepsLength } = props;
@@ -45,6 +46,7 @@ export function ScenarioRunnerProgress(props: {
           {" ".repeat(chartPadding + 1)}┼{"─┬".repeat(maxStepsLength / 2)}
         </Text>
       </Box>
+      <Table data={getStatusTable(scenarios)} />
 
       <Box flexDirection="row">
         {scenarios.map((scenario, index) => (
@@ -60,3 +62,18 @@ export function ScenarioRunnerProgress(props: {
     </Section>
   );
 }
+
+const getStatusTable = (tasks: RunningTask[]): Record<string, string>[] => {
+  return tasks.map((task) => {
+    const all = task.updates.flatMap((update) => update.runs);
+    const finished = all.filter((run) => run.successful).length;
+    const errors = all.filter((run) => !run.successful).length;
+
+    return {
+      name: task.name,
+      "in progress": task.concurrentSessions.toString(),
+      finished: finished.toString(),
+      errors: errors.toString(),
+    };
+  });
+};

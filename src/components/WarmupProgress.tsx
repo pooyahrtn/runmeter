@@ -1,8 +1,9 @@
 import { Box, Text } from "ink";
 import { ProgressBar } from "./ProgressBar";
 import { Section } from "./Section";
+import React from "react";
 
-export function WarmupProgress(props: {
+function WarmupProgress(props: {
   tasks: { name: string; progress: number }[];
 }) {
   const maxNameLength = Math.max(
@@ -24,3 +25,5 @@ export function WarmupProgress(props: {
     </Section>
   );
 }
+
+export default React.memo(WarmupProgress);
