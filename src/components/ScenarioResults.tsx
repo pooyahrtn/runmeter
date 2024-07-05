@@ -1,10 +1,10 @@
-import { ScenarioRunnerUpdate } from "../types";
+import { RunningTaskBatchUpdate } from "../types";
 import { Section } from "./Section";
 import { StatsTable } from "./plots/StatsTable";
 import { WhiskerPlot } from "./plots/WhiskerPlot";
 
 export function Results(props: {
-  scenarios: { name: string; updates: ScenarioRunnerUpdate[] }[];
+  scenarios: { name: string; updates: RunningTaskBatchUpdate[] }[];
 }) {
   const itemStats = props.scenarios.map((scenario) => {
     return {

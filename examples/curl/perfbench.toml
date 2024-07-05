@@ -1,6 +1,6 @@
-warmups = 1
+warmups = 10
 duration = '10s'
-max_concurrent_sessions = 2
+max_concurrent_sessions = 4
 
 [scenarios.facebook]
 script = '''

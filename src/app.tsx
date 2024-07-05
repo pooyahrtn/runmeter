@@ -3,7 +3,7 @@
 import * as toml from "toml";
 import path from "node:path";
 import { z } from "zod";
-import { ConfigFile, ScenarioRunnerUpdate, configFileSchema } from "./types";
+import { ConfigFile, RunningTaskBatchUpdate, configFileSchema } from "./types";
 import { createScenarioRunner, warmupScenario } from "./runners";
 import { Box, render } from "ink";
 import { useEffect, useReducer } from "react";
@@ -29,7 +29,7 @@ function runScenarios(
   callbacks: {
     onScenarioUpdate: (
       name: string,
-      newUpdate: ScenarioRunnerUpdate,
+      newUpdate: RunningTaskBatchUpdate,
       activeSessions: number
     ) => void;
     onFinished: () => void;

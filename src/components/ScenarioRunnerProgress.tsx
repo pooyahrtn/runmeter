@@ -46,8 +46,6 @@ export function ScenarioRunnerProgress(props: {
           {" ".repeat(chartPadding + 1)}┼{"─┬".repeat(maxStepsLength / 2)}
         </Text>
       </Box>
-      <Table data={getStatusTable(scenarios)} />
-
       <Box flexDirection="row">
         {scenarios.map((scenario, index) => (
           <Box
@@ -59,6 +57,7 @@ export function ScenarioRunnerProgress(props: {
           </Box>
         ))}
       </Box>
+      <Table data={getStatusTable(scenarios)} />
     </Section>
   );
 }

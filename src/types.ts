@@ -33,10 +33,10 @@ export type RunScriptResult = {
   duration: number;
 };
 
-export type ScenarioRunnerUpdate = { runs: RunScriptResult[] };
+export type RunningTaskBatchUpdate = { runs: RunScriptResult[] };
 
 export type RunningTask = {
   name: string;
-  updates: ScenarioRunnerUpdate[];
+  updates: RunningTaskBatchUpdate[];
   concurrentSessions: number;
 };
