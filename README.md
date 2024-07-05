@@ -1,6 +1,6 @@
 # Runmeter
 
-![screenshot](https://github.com/pooyahrtn/runmeter/blob/main/screenshots/screenshot.png)
+![screenshot](https://github.com/pooyahrtn/runmeter/blob/main/screenshots/example.png)
 
 The performance testing tool allows you to compare the performance of two or more scripts, such as curl commands, by running them in concurrent sessions. It measures various performance metrics, providing real-time visual feedback on the progress and detailed results of the performance tests.
 
