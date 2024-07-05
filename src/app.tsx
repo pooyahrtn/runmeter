@@ -14,7 +14,7 @@ import { parseDurationToSeconds } from "./utils";
 import { Results } from "./components/ScenarioResults";
 import fs from "fs/promises";
 
-const CONFIG_FILE_NAME = "perfbench.toml";
+const CONFIG_FILE_NAME = "runmeter.toml";
 
 const readConfig = (): Promise<ConfigFile> =>
   fs
