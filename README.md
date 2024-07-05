@@ -11,7 +11,7 @@ The performance testing tool allows you to compare the performance of two or mor
 - Real-time Monitoring: Visualize the progress and performance metrics in real-time.
 - Customizable Scenarios: Define different scenarios and scripts to be tested.
 
-## Installation (TODO: not published yet)
+## Installation
 
 ```
 npm install -g runmeter
