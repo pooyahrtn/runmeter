@@ -24,7 +24,6 @@ npm install -g runmeter
 Define a `runmeter.toml` configuration file to specify your testing scenarios, warmup sessions, duration, and concurrency settings. Below is an example configuration:
 
 ```toml
-Copy code
 warmups = 10
 duration = '10s'
 max_concurrent_sessions = 4
