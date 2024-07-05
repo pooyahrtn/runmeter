@@ -4,7 +4,9 @@
   "version": "0.0.1",
   "type": "module",
   "main": "src/index.tsx",
-  "bin": "dist/index.js",
+  "bin": {
+    "runmeter": "dist/index.js"
+  },
   "scripts": {
     "start": "pnpm run build && node dist/index.js",
     "lint": "eslint . --ext ts,tsx --report-unused-disable-directives --max-warnings 0",
