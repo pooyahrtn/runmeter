@@ -2,7 +2,7 @@
 
 ![screenshot](https://github.com/pooyahrtn/runmeter/blob/main/screenshots/example.png)
 
-The performance testing tool allows you to compare the performance of two or more scripts, such as curl commands, by running them in concurrent sessions. It measures various performance metrics, providing real-time visual feedback on the progress and detailed results of the performance tests.
+Runmeter is a benchmarking command-line tool that allows you to compare the performance of two or more scripts, such as curl commands, by running them in concurrent sessions. It measures various performance metrics, providing real-time visual feedback on the progress and detailed results of the performance tests.
 
 ## Features
 
@@ -41,7 +41,6 @@ curl https://www.yahoo.com
 - duration: Duration for which the test should run (e.g., '10s' for 10 seconds).
 - max_concurrent_sessions: Maximum number of concurrent sessions to run.
 - scenarios: Define each scenario with a unique name and the script to be executed.
-
 
 ## Usage
 
