@@ -19,8 +19,6 @@ npm install -g runmeter
 
 ## Configuration
 
-## How to use
-
 Define a `runmeter.toml` configuration file to specify your testing scenarios, warmup sessions, duration, and concurrency settings. Below is an example configuration:
 
 ```toml
@@ -44,21 +42,6 @@ curl https://www.yahoo.com
 - max_concurrent_sessions: Maximum number of concurrent sessions to run.
 - scenarios: Define each scenario with a unique name and the script to be executed.
 
-```toml
-warmups = 10
-duration = '10s'
-max_concurrent_sessions = 4
-
-[scenarios.facebook]
-script = '''
-curl https://www.facebook.com
-'''
-
-[scenarios.yahoo]
-script = '''
-curl https://www.yahoo.com
-'''
-```
 
 ## Usage
 
