@@ -188,7 +188,6 @@ const parseArgs = (): Args => {
 export async function main() {
   try {
     const args = parseArgs();
-    console.log(args);
     const config = await readConfig(args.config);
     render(<App config={config} />);
   } catch (error) {
