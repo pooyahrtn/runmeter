@@ -51,3 +51,9 @@ runmeter
 ```
 
 This will execute the defined scripts, provide real-time visual feedback, and output detailed performance metrics for analysis.
+
+## Development
+
+1. Install PNPM
+2. Run `pnpm run start ./examples/curl/runmeter.toml`
+3. This will build the project and run the example
