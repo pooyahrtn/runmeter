@@ -1,29 +1,12 @@
-#!/usr/bin/env node
-
-import * as toml from "toml";
-import path from "node:path";
-import { z } from "zod";
-import { ConfigFile, RunningTaskBatchUpdate, configFileSchema } from "./types";
+import { ConfigFile, RunningTaskBatchUpdate } from "./types";
 import { createScenarioRunner, warmupScenario } from "./runners";
-import { Box, render } from "ink";
+import { Box } from "ink";
 import { useEffect, useReducer } from "react";
 import { State, reducer } from "./state";
 import WarmupProgress from "./components/WarmupProgress";
 import { ScenarioRunnerProgress } from "./components/ScenarioRunnerProgress";
 import { parseDurationToSeconds } from "./utils";
 import { Results } from "./components/ScenarioResults";
-import fs from "fs/promises";
-import yargs from "yargs";
-import { hideBin } from "yargs/helpers";
-
-const CONFIG_FILE_NAME = "runmeter.toml";
-
-const readConfig = (configPath?: string): Promise<ConfigFile> =>
-  fs
-    .readFile(path.resolve(process.cwd(), configPath ?? CONFIG_FILE_NAME))
-    .then((buffer) => buffer.toString())
-    .then((config) => toml.parse(config))
-    .then(configFileSchema.parse);
 
 function runScenarios(
   config: ConfigFile,
@@ -77,7 +60,7 @@ function runScenarios(
   return stop;
 }
 
-function App(props: { config: ConfigFile }) {
+export function App(props: { config: ConfigFile }) {
   const { config } = props;
 
   const initialState: State = {
@@ -169,31 +152,4 @@ function getIntervalDuration(config: ConfigFile, maxWidth: number) {
   const maxDuration = Math.max(...scenarioDurations);
 
   return Math.ceil((maxDuration / maxWidth) * 1000);
-}
-
-type Args = {
-  config?: string;
-};
-const parseArgs = (): Args => {
-  const argv = yargs(hideBin(process.argv))
-    .option("config", {
-      alias: "c",
-      type: "string",
-      description: "Path to configuration file",
-    })
-    .parseSync();
-  return argv;
-};
-
-export async function main() {
-  try {
-    const args = parseArgs();
-    const config = await readConfig(args.config);
-    render(<App config={config} />);
-  } catch (error) {
-    if (error instanceof z.ZodError) {
-      console.error(error.issues);
-    }
-    throw error;
-  }
 }

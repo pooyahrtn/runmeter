@@ -8,6 +8,7 @@ const sharedConfigSchema = z.object({
     message: "Duration must be a number followed by 's', 'm', or 'h'",
   }),
   max_concurrent_sessions: z.number().optional(),
+  parse_curl: z.boolean().optional(),
 });
 
 export type SharedConfig = z.infer<typeof sharedConfigSchema>;
