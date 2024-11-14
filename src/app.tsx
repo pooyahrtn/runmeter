@@ -13,12 +13,14 @@ import { ScenarioRunnerProgress } from "./components/ScenarioRunnerProgress";
 import { parseDurationToSeconds } from "./utils";
 import { Results } from "./components/ScenarioResults";
 import fs from "fs/promises";
+import yargs from "yargs";
+import { hideBin } from "yargs/helpers";
 
 const CONFIG_FILE_NAME = "runmeter.toml";
 
-const readConfig = (): Promise<ConfigFile> =>
+const readConfig = (configPath?: string): Promise<ConfigFile> =>
   fs
-    .readFile(path.resolve(process.cwd(), CONFIG_FILE_NAME))
+    .readFile(path.resolve(process.cwd(), configPath ?? CONFIG_FILE_NAME))
     .then((buffer) => buffer.toString())
     .then((config) => toml.parse(config))
     .then(configFileSchema.parse);
@@ -169,9 +171,25 @@ function getIntervalDuration(config: ConfigFile, maxWidth: number) {
   return Math.ceil((maxDuration / maxWidth) * 1000);
 }
 
+type Args = {
+  config?: string;
+};
+const parseArgs = (): Args => {
+  const argv = yargs(hideBin(process.argv))
+    .option("config", {
+      alias: "c",
+      type: "string",
+      description: "Path to configuration file",
+    })
+    .parseSync();
+  return argv;
+};
+
 export async function main() {
   try {
-    const config = await readConfig();
+    const args = parseArgs();
+    console.log(args);
+    const config = await readConfig(args.config);
     render(<App config={config} />);
   } catch (error) {
     if (error instanceof z.ZodError) {
