@@ -1,6 +1,6 @@
 import { createSemaphore } from "./semaphore";
-import { RunScriptResult, ScenarioConfig, SharedConfig } from "./types";
-import { parseDurationToSeconds } from "./utils";
+import { RunScriptResult, ScenarioConfig, SharedConfig } from "../types";
+import { parseDurationToSeconds } from "../utils";
 import { spawn } from "child_process";
 
 const parseConfig = (
@@ -12,6 +12,7 @@ const parseConfig = (
     warmups = defaultConfig.warmups,
     max_concurrent_sessions = defaultConfig.max_concurrent_sessions ?? 10,
     script,
+    parse_curl = false,
   } = scenario;
 
   return {
@@ -19,6 +20,7 @@ const parseConfig = (
     warmups,
     max_concurrent_sessions,
     script,
+    parse_curl,
   };
 };
 

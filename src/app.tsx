@@ -1,5 +1,5 @@
 import { ConfigFile, RunningTaskBatchUpdate } from "./types";
-import { createScenarioRunner, warmupScenario } from "./runners";
+import { createScenarioRunner, warmupScenario } from "./runners/runners";
 import { Box } from "ink";
 import { useEffect, useReducer } from "react";
 import { State, reducer } from "./state";
