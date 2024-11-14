@@ -1,6 +1,6 @@
 warmups = 10
 duration = '10s'
-max_concurrent_sessions = 4
+max_concurrent_sessions = 2
 parse_curl = true
 
 [scenarios.facebook]
