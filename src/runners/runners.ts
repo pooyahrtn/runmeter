@@ -1,5 +1,5 @@
 import { createSemaphore } from "./semaphore";
-import { RunScriptResult, ScenarioConfig, SharedConfig } from "../types";
+import { RunScriptResult, ScenarioConfig, SharedConfig, Task } from "../types";
 import { parseDurationToSeconds } from "../utils";
 import { createShellTaskRunner } from "./shellTaskRunner";
 import { createCurlTaskRunner } from "./curlTaskRunner";
@@ -112,7 +112,8 @@ export function createScenarioRunner(
   };
 }
 
-const createTask = (scenario: Required<ScenarioConfig>) => {
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+const createTask = (scenario: Required<ScenarioConfig>): Task<any> => {
   if (scenario.parse_curl) {
     return createCurlTaskRunner(scenario.script);
   }
