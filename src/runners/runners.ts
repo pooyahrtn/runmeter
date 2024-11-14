@@ -2,6 +2,7 @@ import { createSemaphore } from "./semaphore";
 import { RunScriptResult, ScenarioConfig, SharedConfig } from "../types";
 import { parseDurationToSeconds } from "../utils";
 import { createShellTaskRunner } from "./shellTaskRunner";
+import { createCurlTaskRunner } from "./curlTaskRunner";
 
 const parseConfig = (
   scenario: ScenarioConfig,
@@ -12,7 +13,7 @@ const parseConfig = (
     warmups = defaultConfig.warmups,
     max_concurrent_sessions = defaultConfig.max_concurrent_sessions ?? 10,
     script,
-    parse_curl = false,
+    parse_curl = defaultConfig.parse_curl ?? false,
   } = scenario;
 
   return {
@@ -29,10 +30,8 @@ export async function warmupScenario(
   defaultConfig: SharedConfig,
   onProgress: (progress: number) => void
 ): Promise<RunScriptResult[]> {
-  const { warmups, max_concurrent_sessions, script } = parseConfig(
-    scenario,
-    defaultConfig
-  );
+  const config = parseConfig(scenario, defaultConfig);
+  const { warmups, max_concurrent_sessions } = config;
 
   const semaphore = createSemaphore({
     maxConcurrency: max_concurrent_sessions,
@@ -40,7 +39,7 @@ export async function warmupScenario(
 
   let completed = 0;
 
-  const task = createShellTaskRunner(script);
+  const task = createTask(config);
   const args = await task.prepare();
 
   const warmupRuns = Array.from({ length: warmups }, async () => {
@@ -57,16 +56,13 @@ export function createScenarioRunner(
   scenario: ScenarioConfig,
   defaultConfig: SharedConfig
 ) {
-  const { max_concurrent_sessions, duration } = parseConfig(
-    scenario,
-    defaultConfig
-  );
+  const config = parseConfig(scenario, defaultConfig);
+  const { max_concurrent_sessions, duration } = config;
 
   const results: RunScriptResult[] = [];
 
   let concurrentSessions = 0;
-  const task = createShellTaskRunner(scenario.script);
-  // const args =
+  const task = createTask(config);
 
   // Run as many sessions as possible concurrently
   const interval = setInterval(() => {
@@ -115,3 +111,10 @@ export function createScenarioRunner(
     flush,
   };
 }
+
+const createTask = (scenario: Required<ScenarioConfig>) => {
+  if (scenario.parse_curl) {
+    return createCurlTaskRunner(scenario.script);
+  }
+  return createShellTaskRunner(scenario.script);
+};
