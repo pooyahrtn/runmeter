@@ -1,5 +1,5 @@
-import { ConfigFile, RunningTaskBatchUpdate } from "./types";
-import { createScenarioRunner, warmupScenario } from "./runners/runners";
+import { ConfigFile } from "./types";
+import { warmupScenario } from "./runners/runners";
 import { Box } from "ink";
 import { useEffect, useReducer } from "react";
 import { State, reducer } from "./state";
@@ -7,58 +7,7 @@ import WarmupProgress from "./components/WarmupProgress";
 import { ScenarioRunnerProgress } from "./components/ScenarioRunnerProgress";
 import { parseDurationToSeconds } from "./utils";
 import { Results } from "./components/ScenarioResults";
-
-function runScenarios(
-  config: ConfigFile,
-  intervalDuration: number,
-  callbacks: {
-    onScenarioUpdate: (
-      name: string,
-      newUpdate: RunningTaskBatchUpdate,
-      activeSessions: number
-    ) => void;
-    onFinished: () => void;
-  }
-) {
-  const scenarios = Object.entries(config.scenarios).map(
-    ([name, scenario]) => ({
-      name,
-      runner: createScenarioRunner(scenario, config),
-    })
-  );
-
-  let elapsedSeconds = 0;
-
-  const interval = setInterval(() => {
-    elapsedSeconds = elapsedSeconds + intervalDuration / 1000;
-
-    const allFinished = scenarios.every(({ runner }) =>
-      runner.isFinished(elapsedSeconds)
-    );
-
-    scenarios.forEach((scenario) => {
-      callbacks.onScenarioUpdate(
-        scenario.name,
-        {
-          runs: scenario.runner.flush(),
-        },
-        scenario.runner.getActiveSessions()
-      );
-    });
-
-    if (allFinished) {
-      stop();
-      callbacks.onFinished();
-    }
-  }, intervalDuration);
-
-  const stop = () => {
-    scenarios.forEach(({ runner }) => runner.stop());
-    clearInterval(interval);
-  };
-
-  return stop;
-}
+import { runScenarios } from "./runners/runScenarios";
 
 export function App(props: { config: ConfigFile }) {
   const { config } = props;
