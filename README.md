@@ -25,6 +25,7 @@ Define a `runmeter.toml` configuration file to specify your testing scenarios, w
 warmups = 10
 duration = '10s'
 max_concurrent_sessions = 4
+parse_curl = true
 
 [scenarios.facebook]
 script = '''
