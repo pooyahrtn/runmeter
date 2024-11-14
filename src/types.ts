@@ -34,6 +34,12 @@ export type RunScriptResult = {
   duration: number;
 };
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export type Task<Args extends any[]> = {
+  prepare: () => Promise<Args>;
+  run: (...args: Args) => Promise<RunScriptResult>;
+};
+
 export type RunningTaskBatchUpdate = { runs: RunScriptResult[] };
 
 export type RunningTask = {

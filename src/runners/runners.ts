@@ -1,7 +1,7 @@
 import { createSemaphore } from "./semaphore";
 import { RunScriptResult, ScenarioConfig, SharedConfig } from "../types";
 import { parseDurationToSeconds } from "../utils";
-import { spawn } from "child_process";
+import { createShellTaskRunner } from "./shellTaskRunner";
 
 const parseConfig = (
   scenario: ScenarioConfig,
@@ -40,8 +40,11 @@ export async function warmupScenario(
 
   let completed = 0;
 
+  const task = createShellTaskRunner(script);
+  const args = await task.prepare();
+
   const warmupRuns = Array.from({ length: warmups }, async () => {
-    const result = await semaphore.withSemaphore(() => runScript(script));
+    const result = await semaphore.withSemaphore(() => task.run(...args));
     completed++;
     onProgress(completed / warmups);
     return result;
@@ -62,15 +65,20 @@ export function createScenarioRunner(
   const results: RunScriptResult[] = [];
 
   let concurrentSessions = 0;
+  const task = createShellTaskRunner(scenario.script);
+  // const args =
 
   // Run as many sessions as possible concurrently
   const interval = setInterval(() => {
     if (concurrentSessions < max_concurrent_sessions) {
       concurrentSessions++;
-      runScript(scenario.script).then((result) => {
-        concurrentSessions--;
-        results.push(result);
-      });
+      task
+        .prepare()
+        .then((args) => task.run(...args))
+        .then((result) => {
+          concurrentSessions--;
+          results.push(result);
+        });
     }
   }, 10);
 
@@ -106,69 +114,4 @@ export function createScenarioRunner(
     stop,
     flush,
   };
-}
-
-const runScript = async (script: string): Promise<RunScriptResult> => {
-  const args = parseCommand(script.trim().replace(/\\\n/g, " "));
-  const now = process.hrtime();
-  const exitCode = await spawnProcess(args[0], args.slice(1));
-  const duration = process.hrtime(now);
-  return {
-    successful: exitCode === 0,
-    duration: duration[0] * 1e3 + duration[1] / 1e6,
-  };
-};
-
-const spawnProcess = async (
-  command: string,
-  args: string[]
-): Promise<number | null> => {
-  return new Promise((resolve, reject) => {
-    const process = spawn(command, args, {
-      stdio: ["ignore", "ignore", "ignore"],
-    });
-
-    process.on("close", (code) => {
-      resolve(code);
-    });
-
-    process.on("error", (error) => {
-      reject(error);
-    });
-  });
-};
-
-// Copied from https://stackoverflow.com/questions/39303787/parse-string-into-command-and-args-in-javascript
-function parseCommand(command: string) {
-  try {
-    const re_next_arg =
-      /^\s*((?:(?:"(?:\\.|[^"])*")|(?:'[^']*')|\\.|\S)+)\s*(.*)$/;
-    let next_arg = ["", "", command];
-    const args = [];
-    while ((next_arg = re_next_arg.exec(next_arg[2])!)) {
-      let quoted_arg = next_arg[1];
-      let unquoted_arg = "";
-      while (quoted_arg.length > 0) {
-        if (/^"/.test(quoted_arg)) {
-          const quoted_part = /^"((?:\\.|[^"])*)"(.*)$/.exec(quoted_arg)!;
-          unquoted_arg += quoted_part[1].replace(/\\(.)/g, "$1");
-          quoted_arg = quoted_part[2];
-        } else if (/^'/.test(quoted_arg)) {
-          const quoted_part = /^'([^']*)'(.*)$/.exec(quoted_arg)!;
-          unquoted_arg += quoted_part[1];
-          quoted_arg = quoted_part[2];
-        } else if (/^\\/.test(quoted_arg)) {
-          unquoted_arg += quoted_arg[1];
-          quoted_arg = quoted_arg.substring(2);
-        } else {
-          unquoted_arg += quoted_arg[0];
-          quoted_arg = quoted_arg.substring(1);
-        }
-      }
-      args[args.length] = unquoted_arg;
-    }
-    return args;
-  } catch (e) {
-    throw new Error(`Failed to parse command: ${command}`);
-  }
 }
